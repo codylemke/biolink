@@ -1,0 +1,16 @@
+name: biolink
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::python
+  - conda-forge::ipython
+  - conda-forge::lxml
+  - conda-forge::requests
+  - conda-forge::beautifulsoup4
+  - conda-forge::httpx
+  - conda-forge::psutil
+  - conda-forge::pytest
+  - conda-forge::pytest-asyncio
+  - bioconda::blast
+  - bioconda::mafft
