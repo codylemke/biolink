@@ -1,6 +1,15 @@
 from typing import List
+from biolink.models import AminoAcid
 
-class ProteinAlignmentProfile:
+class AlignmentPosition:
     
-    def __init__(self, alignment: List[str]):
+    def __init__(self, alignment: List[AminoAcid]):
+        # Fields
+        self.hydrophobicity_ph7_range
+        self.hydrophobicity_ph7_mean
+    
+        
+        # Constructor
         pass
+    
+    

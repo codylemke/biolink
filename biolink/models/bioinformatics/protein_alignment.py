@@ -1,14 +1,24 @@
 from typing import List, Dict
 from pathlib import Path
 import pandas
-from . import FastaFile, AminoAcid
+from biolink.models import SystemInfo, FastaFile, AminoAcid
 from __future__ import annotations
 
 class ProteinAlignment:
     def __init__(self, file_path):
         # Fields
+        self.type: str # DNA or Protein
+        self.alignment_tool: str
+        self.alignment_tool_version: str
+        self.system_info: SystemInfo
+        self.created_date: str
+        
         self.file_path: Path
+        self.consensus_sequence: str
         self.dataframe: pandas.DataFrame
+        
+        self.gap_details: str
+        self.notes: str
         
         
         # Constructor
@@ -99,52 +109,7 @@ class ProteinAlignment:
         distribution = dict(sorted(distribution.items(), key=lambda item: item[1]))
         return distribution
     
-    # hydrophobicity_ph7_range
-    # hydrophobicity_ph7_mean
-    # hydrophobicity_ph7_median
-    # hydrophobicity_ph7_stdev
-    # hydrophobicity_ph2_range
-    # hydrophobicity_ph2_mean
-    # hydrophobicity_ph2_median
-    # hydrophobicity_ph2_stdev
-    # pka_range
-    # pka_mean
-    # pka_median
-    # pka_stdev
-    # pkb_range
-    # pkb_mean
-    # pkb_median
-    # pkb_stdev
-    # pkx_range
-    # pkx_mean
-    # pkx_median
-    # pkx_stdev
-    # pi_range
-    # pi_mean
-    # pi_median
-    # pi_stdev
-    # van_der_waals_volume_range
-    # van_der_waals_volume_median
-    # van_der_waals_volume_mean
-    # van_der_waals_volume_stdev
-    # molecular_weight_range
-    # molecular_weight_median
-    # molecular_weight_mean
-    # molecular_weight_stdev
-    # residue_weight_range
-    # residue_weight_median
-    # residue_weight_mean
-    # residue_weight_stdev
-    # number_of_residues_present (variability)
-    # amino_acid_frequency (for each residue)
-    # gap_frequency
-    # accessions_with_gaps
-    # accessions_without_gaps
-    # aromatic_frequency
-    # aliphatic_frequency
-    # polar_frequency
-    # proline_frequency
-    # glycine_frequency
+    
     
     # mean
     # median

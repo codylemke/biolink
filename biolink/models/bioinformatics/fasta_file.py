@@ -4,6 +4,7 @@ from typing import Dict, List, TextIO
 from .fasta_entry import FastaEntry
 
 class FastaFile:
+    
     def __init__(self, path: str):
         # Fields
         self._file_path: Path
@@ -13,9 +14,11 @@ class FastaFile:
         self._file_path = Path(path).resolve()
         if not self._file_path.exists():
             self._file_path.touch()
-        with self._file_path.open('r') as file:
-            lines = ''.join(file.readlines())
-            self._entries = [FastaEntry('>' + entry.rstrip()) for entry in lines.split('>')[1:]]
+            self._entries = []
+        else:
+            with self._file_path.open('r') as file:
+                lines = ''.join(file.readlines())
+                self._entries = [FastaEntry('>' + entry.rstrip()) for entry in lines.split('>')[1:]]
     
     
     # Internal Methods       

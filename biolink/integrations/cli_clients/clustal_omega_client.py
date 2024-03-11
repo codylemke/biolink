@@ -7,7 +7,7 @@ class ClustalOmegaClient:
         self.system_info = SystemInfo()
         pass
     
-    def align(self, input_fasta:str, output_fasta:str, iterations:int=0, thread_count:int=0, use_kimura:bool=False, full:bool=False, full_iter:bool=False):
+    async def align(self, input_fasta:str, output_fasta:str, iterations:int=0, thread_count:int=0, use_kimura:bool=False, full:bool=False, full_iter:bool=False):
         if thread_count == 0:
             thread_count = self.system_info.cpu_info.total_cores - 1
         command = [

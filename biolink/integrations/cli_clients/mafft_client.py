@@ -7,7 +7,7 @@ class MafftClient:
         self.input_dir = input_dir
         self.output_dir = output_dir
         
-    def align(self, input_file: str):
+    async def align(self, input_file: str):
         system_info = SystemInfo()
         thread_count = system_info.cpu_info.total_cores - 1
         input_path = self.input_dir / input_file

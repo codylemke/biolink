@@ -17,7 +17,7 @@ class AminoAcid:
         self.one_letter_code: str
         
         # Constructor
-        self.one_letter_code = self.process(amino_acid_code, 1)
+        self.one_letter_code = self.process_amino_acid_code(amino_acid_code)
         
     
     # Internal Methods
@@ -68,10 +68,6 @@ class AminoAcid:
     @property
     def pi(self) -> float:
         return self.amino_acid_data["pi"]
-    
-    @property
-    def property(self) -> str:
-        return self.amino_acid_data["property"]
 
     @property
     def relative_hydrophobicity_at_ph2(self) -> int:
@@ -85,11 +81,102 @@ class AminoAcid:
     @property
     def van_der_waals_volume(self) -> float:
         return self.amino_acid_data["van_der_waals_volume"]
-
     
-    # Public Methods   
+    @property
+    def is_acidic(self) -> bool:
+        return self.one_letter_code in ['D','E']
+    
+    @property
+    def is_basic(self) -> bool:
+        return self.one_letter_code in ['R','K','H']
+    
+    @property
+    def is_charged(self) -> bool:
+        return self.is_basic or self.is_acidic
+    
+    @property
+    def is_aromatic(self) -> bool:
+        return self.one_letter_code in ['F','W','Y']
+    
+    @property
+    def is_aliphatic(self) -> bool:
+        return self.one_letter_code in ['A','I','L','M','V']
+    
+    @property
+    def is_polar(self) -> bool:
+        return self.one_letter_code in ['N','C','Q','S','T','Y','D','E','H','K','R']
+    
+    @property
+    def is_hydrophobic(self) -> bool:
+        return self.relative_hydrophobicity_at_ph7 > 0
+    
+    @property
+    def is_small(self) -> bool:
+        return self.one_letter_code in ['A','G','C','S','T']
+    
+    @property
+    def is_large(self) -> bool:
+        return self.one_letter_code in ['F','W','Y','R','H']
+    
+    @property
+    def if_flexible(self) -> bool:
+        return self.one_letter_code in ['G','P']
+    
+    @property
+    def can_be_phosphorylated(self) -> bool:
+        return self.one_letter_code in ['S','T','Y']
+    
+    @property
+    def can_be_glycosylated(self) -> bool:
+        return self.one_letter_code in ['N','S','T','Q']
+    
+    @property
+    def is_protein_acceptor_or_donor(self) -> bool:
+        return self.one_letter_code == 'H'
+    
+    @property
+    def can_bind_metal_ions(self) -> bool:
+        return self.one_letter_code in ['C','D','E','H']
+    
+    @property
+    def is_bcaa(self) -> bool:
+        return self.one_letter_code in ['V','L','I']
+    
+    @property
+    def can_be_ubiquitinated(self) -> bool:
+        return self.one_letter_code == 'K'
+    
+    @property
+    def can_form_special_bonds(self) -> bool:
+        return self.one_letter_code in ['C', 'S', 'T', 'Y', 'K', 'R', 'D', 'E']
+    
+    @property
+    def involved_in_disulfide_bonds(self) -> bool:
+        return self.one_letter_code == 'C'
+    
+    @property
+    def prefers_alpha_helix(self) -> bool:
+        return self.one_letter_code in ['A','L','M','F','H','K']
+    
+    @property
+    def prefers_beta_sheets(self) -> bool:
+        return self.one_letter_code in ['V','I','T','Y']
+    
+    @property
+    def is_human_essential(self) -> bool:
+        return self.one_letter_code in ['H', 'I', 'L', 'K', 'M', 'F', 'T', 'W', 'V']
+    
+    @property
+    def is_human_conditionally_essential(self) -> bool:
+        return self.one_letter_code in ['R', 'C', 'Q', 'Y', 'G', 'P', 'S']
+    
+    @property
+    def in_structural_motifs(self) -> bool:
+        return self.one_letter_code in ['C','H','N','K']
+    
+    # Public Methods
     @classmethod
-    def process_code(cls, code: str, code_output_type:int=1) -> str:
+    def process_amino_acid_code(cls, code: str, code_output_type:int=1) -> str:
         # Validate Code Output Type
         if code_output_type not in [1, 3]:
             raise Exception(f"Invalid code_output_type argument provided: {code_output_type}. Valid code_output_type: 1 or 3")
@@ -127,6 +214,6 @@ if AminoAcid.amino_acid_data is None:
         AminoAcid.amino_acid_data = json.load(file)
     AminoAcid.one_letter_code_map = {key: AminoAcid.amino_acid_data[key]["three_letter_code"] for key in AminoAcid.amino_acid_data.keys()}
     AminoAcid.three_letter_code_map = {value: key for key, value in AminoAcid.one_letter_code_map}
-    AminoAcid.valid_one_letter_code = [code for code in AminoAcid.one_letter_code_map.keys()]
-    AminoAcid.valid_three_letter_code = [code for code in AminoAcid.three_letter_code_map.keys()]
+    AminoAcid.valid_one_letter_codes = [code for code in AminoAcid.one_letter_code_map.keys()]
+    AminoAcid.valid_three_letter_codes = [code for code in AminoAcid.three_letter_code_map.keys()]
     
