@@ -1,10 +1,11 @@
 from __future__ import annotations
+import logging
 from typing import List, Dict, Any
 from biolink.models.bioinformatics.fasta_file import FastaFile
 from biolink.models.bioinformatics.protein_alignment_position_profile import ProteinAlignmentPositionProfile
-from biolink.models.biology import AminoAcid
 
 class ProteinAlignment:
+    logger = logging.getLogger("ProteinAlignment")
     
     def __init__(self):
         # Fields
@@ -34,7 +35,7 @@ class ProteinAlignment:
     @classmethod
     def parse_fasta(cls, file_path:str) -> ProteinAlignment:
         alignment = cls()
-        alignment.file = FastaFile(file_path)        
+        alignment.file = FastaFile.parse_file(file_path)        
         for entry in alignment.file.entries:
             alignment.data[entry.accession] = entry.sequence
         return alignment

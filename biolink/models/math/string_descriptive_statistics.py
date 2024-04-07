@@ -1,7 +1,9 @@
+import logging
 from typing import Dict, List
 import pandas as pd
 
 class StringDescriptiveStatistics:
+    logger = logging.getLogger("StringDescriptiveStatistics")
     
     def __init__(self, data: List[str]):
         # Fields

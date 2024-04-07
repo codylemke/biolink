@@ -1,9 +1,11 @@
 from __future__ import annotations
+import logging
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Dict
 
 class Taxonomy:
+    logger = logging.getLogger("Taxonomy")
     
     def __init__(self):
         # Fields
@@ -40,7 +42,17 @@ class Taxonomy:
         self.subspecies: str = None
         self.clades: List[str] = []
         self.entrez_records: Dict[str, int] = {}
+        
+        # Constructor
+        # N/A
     
+    # Internal Methods
+    # N/A
+    
+    # Properties
+    # N/A
+    
+    # Public Methods
     @staticmethod
     def fetch(taxid: str) -> Taxonomy:
         url = f'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={taxid}'

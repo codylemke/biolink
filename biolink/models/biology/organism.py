@@ -1,8 +1,10 @@
 from __future__ import annotations
+import logging
 from .taxonomy import Taxonomy
 from typing import Dict, Any, List
 
 class Organism:
+    logger = logging.getLogger("Organism")
     
     def __init__(self):
         # Fields

@@ -1,9 +1,11 @@
+import logging
 from scipy import stats
 import pandas as pd
 import numpy as np
 from biolink.models.math import StringDescriptiveStatistics
 
 class StringInferentialStatistics:
+    logger = logging.getLogger("StringInferentialStatistics")
     
     def __init__(self, set_1: StringDescriptiveStatistics, set_2: StringDescriptiveStatistics):
         # Fields

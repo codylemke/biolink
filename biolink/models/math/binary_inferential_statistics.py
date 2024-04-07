@@ -1,8 +1,10 @@
+import logging
 import numpy as np
 from scipy import stats
 from biolink.models.math import BinaryDescriptiveStatistics
 
 class BinaryInferentialStatistics:
+    logger = logging.getLogger("BinaryInferentialStatistics")
     
     def __init__(self, stats_1: BinaryDescriptiveStatistics, stats_2: BinaryDescriptiveStatistics):
         # Fields

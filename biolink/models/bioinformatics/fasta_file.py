@@ -1,19 +1,22 @@
 from __future__ import annotations
-import json
+import logging
 from pathlib import Path
-from typing import Dict, List, TextIO
+from typing import List
 from .fasta_entry import FastaEntry
 
 class FastaFile:
+    logger = logging.getLogger("FastaFile")
     
     def __init__(self, contents: str):
         # Fields
-        self._file: Path
+        self._logger: logging.Logger
+        self._file_path: Path
         self.entries: List[FastaEntry]
         
         # Constructor
-        self._file = None
-        self._entries = []
+        self._logger = logging.getLogger(self.__class__.__name__)
+        self._file_path = None
+        self.entries = []
         entry_lines = []
         for line in contents.splitlines():
             if line.startswith('>') and entry_lines:
@@ -26,7 +29,6 @@ class FastaFile:
             entry_str = '\n'.join(entry_lines)
             self.entries.append(FastaEntry(entry_str))
             
-    
     
     # Internal Methods       
     def __len__(self):
@@ -46,27 +48,38 @@ class FastaFile:
     
     # Properties
     @property
-    def accessions(self):
+    def accessions(self) -> List[str]:
         return [entry.accession for entry in self.entries]
+    
+    @property
+    def file_path(self) -> str:
+        return str(self._file_path.absolute())
+    
+    @file_path.setter
+    def file_path(self, value) -> None:
+        self._file_path = Path(value)
     
     
     # Public Methods  
     def append(self, entry: FastaEntry) -> None:
-        self._entries.append(entry)
+        self.entries.append(entry)
         
     
     @classmethod
     def parse_file(cls, file_path: str) -> FastaFile:    
         with open(file_path, 'r') as file:
             fasta_file = cls(file.read())
+            fasta_file.file_path = file_path
         return fasta_file
     
     
-    def save(self, file=None) -> None:
-        if file is not None:
-            self._file = file
-        if self._file is None:
+    def save(self, file_path: str=None) -> None:
+        if file_path is not None:
+            self.file_path = file_path
+        if self._file_path is None:
             raise Exception("The file path was not specified.")
-        with self._file.open("w") as file:
-            for entry in self._entries:
+        with self._file_path.open("w") as file:
+            for entry in self.entries:
                 file.write(str(entry))
+                file.write('\n')
+                

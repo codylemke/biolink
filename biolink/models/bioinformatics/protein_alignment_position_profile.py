@@ -1,8 +1,10 @@
+import logging
 from typing import List
 from biolink.models.biology.amino_acid import AminoAcid
 from biolink.models.math import NumericalDescriptiveStatistics, BinaryDescriptiveStatistics
 
 class ProteinAlignmentPositionProfile:
+    logger = logging.getLogger("ProteinAlignmentPositionProfile")
     
     def __init__(self, alignment_position: List[str]):
         # Fields

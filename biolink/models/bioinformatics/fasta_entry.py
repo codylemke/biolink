@@ -1,6 +1,8 @@
+import logging
 import re
 
 class FastaEntry:
+    logger = logging.getLogger("FastaEntry")
     
     def __init__(self, text: str):
         # Fields
@@ -46,13 +48,12 @@ class FastaEntry:
                 self._database = "Ensembl"
             else:
                 self._database = "Generic"
-        else:
-            return self._database
+        return self._database
     
     @property
     def accession(self) -> str:
         if self.database == "SwissProt" or self.database == "TrEMBL":
-            return re.search(r'\|(.*?)\|', self._header).group(0)
+            return re.search(r'\|(.*?)\|', self._header).group(1)
         elif self.database.startswith("UniRef"):
             return re.search(r'^>(UniRef\d+_[A-Za-z0-9]+)', self._header).group(0)
         elif self.database == "RefSeq":

@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 from pathlib import Path
 import re
 import subprocess
@@ -6,6 +7,7 @@ from typing import List, Dict
 import psutil
 
 class Blast:
+    logger = logging.getLogger("Blast")
     
     def __init__(self, input_dir: str, database_dir: str, output_dir: str):
         # Fields
@@ -156,10 +158,16 @@ class Blast:
         ]
         if kwargs.get("outfmt") == None:
             kwargs["outfmt"] = "10 sacc pident ppos length slen qcovs gapopen qstart qend sstart send evalue bitscore"
+        if "max-threads" in args:
+            threads = psutil.cpu_count(logical=True) - 1
+            kwargs["num_threads"] = threads
+            args = tuple(arg for arg in args if arg != "max-threads")
         for arg in args:
             cli_command.append(f"-{arg}")
         for key, value in kwargs.items():
-            cli_command.append(f"-{key} {value}")
+            cli_command.append(f"-{key}")
+            cli_command.append(str(value))
+        Blast.logger.info(f"starting blastp for {input_file} on db {database}")
         stdout = subprocess.run(cli_command, capture_output=True, text=True, check=True).stdout
         with output_path.open('w') as file:
             file.write(stdout)

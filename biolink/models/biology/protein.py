@@ -1,9 +1,11 @@
 from __future__ import annotations
+import logging
 from typing import List, Dict, Any
 from .organism import Organism
 from .amino_acid import AminoAcid
 
 class Protein:
+    logger = logging.getLogger("Protein")
     
     def __init__(self):
         # Fields

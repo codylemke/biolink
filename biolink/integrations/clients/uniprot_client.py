@@ -1,4 +1,5 @@
 from ftplib import FTP
+import logging
 import time
 import httpx
 from typing import List
@@ -8,6 +9,7 @@ import re
 import sys
 
 class UniprotClient:
+    logger = logging.getLogger("UniprotClient")
     
     def __init__(self):
         # Fields
@@ -40,7 +42,7 @@ class UniprotClient:
             total_size = ftp_client.size(filename)
             with open(os.path.join(local_path, filename), 'wb') as local_file:
                 ftp_client.retrbinary(f'RETR {filename}', handle_binary)
-                print(f"\nDownloaded {filename} to {local_path}")
+                self.logger.info(f"\nDownloaded {filename} to {local_path}")
     
     
     # Properties
@@ -128,7 +130,14 @@ class UniprotClient:
             from_database = 'UniParc'
         else:
             from_database = 'UniProtKB_AC-ID'
-        return self.run_id_mapping(entry_ids, from_database, outfmt=outfmt, compressed=compressed, outfile=outfile)
+        data = await self.run_id_mapping(entry_ids, from_database, outfmt=outfmt, compressed=compressed)
+        if outfmt == "json":
+            cleaned_data = [entry["to"] for entry in json.loads(data)["results"]]
+            data = json.dumps(cleaned_data)
+        if outfile != None:
+            with open(outfile, 'w') as file:
+                file.write(data)
+        return data
     
     
     async def query(self) -> str:
@@ -136,6 +145,7 @@ class UniprotClient:
     
     
     async def run_id_mapping(self, entry_ids: List[str], from_database: str='UniProtKB_AC-ID', to_database: str='UniProtKB', outfmt: str="fasta", compressed: bool=False, outfile: str=None) -> str:
+        self.logger.info(f"Starting ID Mapping for {entry_ids}")
         batch_size = 9500
         batches = (entry_ids[i:i + batch_size] for i in range(0, len(entry_ids), batch_size))
         results = []
@@ -148,9 +158,9 @@ class UniprotClient:
                 'ids': batch
             }
             response = await self._client.post(url, data=data)
-            print(response.text)
             json_response = json.loads(response.text)
             job_id = json_response['jobId']
+            self.logger.info(f"Run request jobId: {job_id}")
             # Status Request
             url = f"https://rest.uniprot.org/idmapping/status/{job_id}"
             job_status = str()
@@ -174,10 +184,8 @@ class UniprotClient:
                 response = await self._client.get(url, params=params)
                 results.append(response.text)
         compiled_results = "".join(results)
-        parsed_results = [result["to"] for result in json.loads(compiled_results)["results"]]
-        output = "".join(parsed_results)
         if outfile != None:
             with open(outfile, 'w') as file:
-                file.write(output)                        
-        return output
+                file.write(compiled_results)
+        return compiled_results
     

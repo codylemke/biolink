@@ -1,6 +1,8 @@
+import logging
 from typing import List
 
 class AlignmentEntry:
+    logger = logging.getLogger("AlignmentEntry")
     
     def __init__(self, text: str):
         # Fields

@@ -1,17 +1,31 @@
 import asyncio
 import json
+import logging
 from pathlib import Path
 from biolink.integrations import Blast, UniprotClient, Mafft, ClustalO
 from biolink.models.bioinformatics import FastaFile, ProteinAlignment, BlastResults
 from biolink.models.biology import Protein
+
+# Configure Logging
+log_level = logging.INFO
+log_format = "[%(asctime)s|%(levelname)s|%(name)s] - %(message)s"
+date_format = "%Y-%m-%d|%H:%M:%S"
+formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
+console_log_handler = logging.StreamHandler()
+console_log_handler.setLevel(log_level)
+console_log_handler.setFormatter(formatter)
+root_logger = logging.getLogger()
+root_logger.setLevel(log_level)
+root_logger.addHandler(console_log_handler)
+
 
 data_dir = Path("/home/codylemke/repos/biolink/data")
 uniprot_client = UniprotClient()
 
 async def main():
     # Fetch Input Sequences Accessions
-    input_sequences_file = data_dir / "input_accessions.txt"
-    with input_sequences_file.open('r') as file:
+    input_accessions_file = data_dir / "input_accessions.txt"
+    with input_accessions_file.open('r') as file:
         accessions = [line.strip() for line in file if line.strip()]
     
     # Fetch Input Sequences Fasta Files
@@ -25,7 +39,7 @@ async def main():
         input_sequence_fasta_file = FastaFile(str(entry))
         input_sequence_fasta_file.save(str(input_sequence_file))
         input_fasta_files.append(input_sequence_fasta_file)
-            
+    
     # Fetch Input Sequences Protein Data
     input_protein_data = await uniprot_client.get_entries(accessions, outfmt="json")
     proteins = [Protein.parse_uniprot_details(entry) for entry in json.loads(input_protein_data)]
@@ -65,9 +79,9 @@ async def main():
     input_plant_alignment_file = data_dir / "clustalo" / "input_plant_sequence_alignment.fasta"
     input_bacterial_alignment_file = data_dir / "clustalo" / "input_bacterial_sequence_alignment.fasta"
     input_fungal_alignment_file = data_dir / "clustalo" / "input_fungal_sequence_alignment.fasta"
-    ClustalO.run(input_plant_sequences_file, input_plant_alignment_file, "auto", "max-threads")
-    ClustalO.run(input_bacterial_sequences_file, input_bacterial_alignment_file, "auto", "max-threads")
-    ClustalO.run(input_fungal_sequences_file, input_fungal_alignment_file, "auto", "max-threads")
+    await ClustalO.run(str(input_plant_sequences_file), str(input_plant_alignment_file), "auto", "max-threads")
+    await ClustalO.run(str(input_bacterial_sequences_file), str(input_bacterial_alignment_file), "auto", "max-threads")
+    await ClustalO.run(str(input_fungal_sequences_file), str(input_fungal_alignment_file), "auto", "max-threads")
     input_plant_alignment = ProteinAlignment.parse_fasta(input_plant_alignment_file)
     input_bacterial_alignment = ProteinAlignment.parse_fasta(input_bacterial_alignment_file)
     input_fungal_alignment = ProteinAlignment.parse_fasta(input_fungal_alignment_file)
@@ -83,28 +97,20 @@ async def main():
     input_bacterial_alignment_profile = input_bacterial_alignment.get_alignment_profile()
     input_fungal_alignment_profile = input_fungal_alignment.get_alignment_profile()
     
-    # Align all alignments
-    input_alignment_input_file = data_dir / "mafft" / "input_alignment.txt"
-    input_alignments = [
-        str(input_plant_alignment_file),
-        str(input_bacterial_alignment_file),
-        str(input_fungal_alignment_file)
-    ]
-    with open(input_alignment_input_file, 'w') as file:
-        file.writelines(input_alignments)
+    # Align All Sequences    
     input_alignment_file = data_dir / "mafft" / "input_sequence_alignment.fasta"
-    Mafft.run(input_alignment_input_file, input_alignment_file, "auto", "max-threads")
+    await Mafft.run(str(input_sequences_file), str(input_alignment_file), "auto", "max-threads")
     input_alignment = ProteinAlignment.parse_fasta(input_alignment_file)
     
     # Calculate Alignment Statistics
     input_alignment_profile = input_alignment.get_alignment_profile()
-    
+
     # Blast Input Sequences Against UniRef100
-    database = str(data_dir / "blast_dbs" / "uniref100")
+    database = "/mnt/e/UniRef100-2024_02"
     output_dir = str(data_dir / "blast")
     uniref100_accessions = []
     for file in input_fasta_files:
-        blast_output = Blast.blastp(file, database, output_dir)
+        blast_output = await Blast.blastp(file.file_path, database, output_dir, "max-threads")
         uniref100_accessions.append(BlastResults(blast_output).hit_accessions)
     uniref100_accessions = list(set(uniref100_accessions))
     
@@ -151,9 +157,9 @@ async def main():
     output_plant_alignment_file = data_dir / "clustalo" / "output_plant_sequence_alignment.fasta"
     output_bacterial_alignment_file = data_dir / "clustalo" / "output_bacterial_sequence_alignment.fasta"
     output_fungal_alignment_file = data_dir / "clustalo" / "output_fungal_sequence_alignment.fasta"
-    Mafft.run(output_plant_sequences_file, output_plant_alignment_file, "auto", "max-threads")
-    Mafft.run(output_bacterial_sequences_file, output_bacterial_alignment_file, "auto", "max-threads")
-    Mafft.run(output_fungal_sequences_file, output_fungal_alignment_file, "auto", "max-threads")
+    await Mafft.run(output_plant_sequences_file, output_plant_alignment_file, "auto", "max-threads")
+    await Mafft.run(output_bacterial_sequences_file, output_bacterial_alignment_file, "auto", "max-threads")
+    await Mafft.run(output_fungal_sequences_file, output_fungal_alignment_file, "auto", "max-threads")
     output_plant_alignment = ProteinAlignment.parse_fasta(output_plant_alignment_file)
     output_bacterial_alignment = ProteinAlignment.parse_fasta(output_bacterial_alignment_file)
     output_fungal_alignment = ProteinAlignment.parse_fasta(output_fungal_alignment_file)
@@ -194,6 +200,8 @@ async def main():
     # Acquire data surrounding sequence representation of each domain
     
     # Normalize the representation percentages
+    
+    # Create BlastDB
     
 if __name__ == "__main__":
     asyncio.run(main())

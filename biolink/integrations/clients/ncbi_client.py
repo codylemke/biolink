@@ -1,11 +1,17 @@
+import logging
 import httpx
 from bs4 import BeautifulSoup
-# from biolink.models.biology.taxonomy import Taxonomy
 
 class NCBIClient:
+    logger = logging.getLogger("NCBIClient")
+    
     def __init__(self):
-        self._client: httpx.AsyncClient = httpx.AsyncClient()
-        self._client.get()
+        # Fields
+        self._client: httpx.AsyncClient
+        
+        # Constructors
+        self._client = httpx.AsyncClient()
+        
     
     # Internal Methods 
     async def __aenter__(self):
@@ -13,7 +19,12 @@ class NCBIClient:
     
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self._client.aclose()
-        
+    
+    
+    # Properties
+    # N/A
+    
+    
     # Public Methods
     def get_taxonomy(self, taxon_id: str):
         url = f'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={taxon_id}'

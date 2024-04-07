@@ -1,7 +1,9 @@
 from __future__ import annotations
+import logging
 from typing import List
 
 class BinaryDescriptiveStatistics:
+    logger = logging.getLogger("BinaryDescriptiveStatistics")
     
     def __init__(self, data: List[bool]):
         # Fields

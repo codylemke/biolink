@@ -1,3 +1,4 @@
+import logging
 import json
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
@@ -5,6 +6,7 @@ from typing import Dict, Any, List, Tuple
 file_path = Path(__file__).resolve()
 
 class AminoAcid:
+    logger = logging.getLogger("Blast")
     # https://www.sigmaaldrich.com/US/en/technical-documents/technical-article/protein-biology/protein-structural-analysis/amino-acid-reference-chart
     # https://proteinsandproteomics.org/content/free/tables_1/table08.pdf
     initialized = False

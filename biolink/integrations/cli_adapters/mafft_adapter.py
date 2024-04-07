@@ -1,10 +1,12 @@
 from datetime import datetime
+import logging
 from pathlib import Path
 import subprocess
 from typing import List
 import psutil
 
 class Mafft:
+    logger = logging.getLogger("Mafft")
     
     def __init__(self, input_dir: str, output_dir: str):
         # Fields
@@ -41,18 +43,20 @@ class Mafft:
     # Public Methods
     @staticmethod
     async def run(input_file: str, output_file: str, *args, **kwargs) -> str:
+        Mafft.logger.info(f"Starting Mafft.run for {input_file}")
         cli_command = [
             "mafft",
-            input_file,
         ]
         if "max-threads" in args:
             threads = psutil.cpu_count(logical=True) - 1
-            kwargs["threads"] = threads
+            kwargs["thread"] = threads
             args = tuple(arg for arg in args if arg != "max-threads")
         for arg in args:
             cli_command.append(f"--{arg}")
         for key, value in kwargs.items():
-            cli_command.append(f"--{key} {value}")
+            cli_command.append(f"--{key}")
+            cli_command.append(str(value))
+        cli_command.append(input_file)
         stdout = subprocess.run(cli_command, capture_output=True, text=True, check=True).stdout
         with open(output_file, 'w') as file:
             file.write(stdout)

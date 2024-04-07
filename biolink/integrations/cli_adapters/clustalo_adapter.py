@@ -1,9 +1,11 @@
 from datetime import datetime
+import logging
 from pathlib import Path
 import subprocess
 import psutil
 
 class ClustalO:
+    logger = logging.getLogger("ClustalO")
     
     def __init__(self, input_dir: str, output_dir: str):
         # Fields
@@ -40,10 +42,10 @@ class ClustalO:
     # Public Methods
     @staticmethod
     async def run(input_file: str, output_file: str=None, *args, **kwargs) -> str:
+        ClustalO.logger.info(f"Starting ClustalO run for {input_file}")
         cli_command = [
             "clustalo",
-            "-i", input_file,
-            "-o", "-",
+            "-i", input_file
         ]
         if "max-threads" in args:
             threads = psutil.cpu_count(logical=True) - 1

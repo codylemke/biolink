@@ -1,9 +1,11 @@
+import logging
 from typing import List, Any, Tuple
 from numpy.typing import NDArray
 import numpy as np
 from scipy import stats
 
 class NumericalDescriptiveStatistics:
+    logger = logging.getLogger("NumericalDescriptiveStatistics")
     
     def __init__(self, data: list[float]):
         # Fields

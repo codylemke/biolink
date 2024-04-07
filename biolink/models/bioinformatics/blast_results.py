@@ -1,12 +1,14 @@
 from __future__ import annotations
-from typing import List
+import logging
+from typing import List, Dict, Any
 from .blast_hit import BlastHit
 
 class BlastResults:
+    logger = logging.getLogger("BlastResults")
     
     def __init__(self, blast_output: str):
         # Fields
-        self.metadata
+        self.metadata: Dict[str, Any]
         self.hits: List[BlastHit]
         
         # Constructor
@@ -35,7 +37,7 @@ class BlastResults:
     
     # Public Methods
     @classmethod
-    def parse_file(cls, file: str) -> BlastResults:
-        with open(file, 'r') as file:
+    def parse_file(cls, blast_file: str) -> BlastResults:
+        with open(blast_file, 'r') as file:
             blast_results = cls(file.read())
         return blast_results

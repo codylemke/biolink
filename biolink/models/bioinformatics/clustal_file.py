@@ -1,7 +1,9 @@
+import logging
 from pathlib import Path
 from typing import List
 
 class ClustalFile:
+    logger = logging.getLogger("ClustalFile")
     
     def __init__(self, file_path: str):
         # Fields
