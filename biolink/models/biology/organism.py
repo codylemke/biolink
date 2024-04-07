@@ -1,15 +1,37 @@
+from __future__ import annotations
 from .taxonomy import Taxonomy
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 class Organism:
+    
     def __init__(self):
+        # Fields
+        self.taxon_id: int
         self.scientific_name: str
         self.common_name: str
-        self.taxon_id: int
-        self.lineage: Taxonomy
+        self.taxonomy_list = List[str]
+        self.taxonomy: Taxonomy
         
-    def parse_uniprot_json(self, json: Dict[str, Any]):
-        self.scientific_name = json['scientificName']
-        self.common_name = json['commonName']
-        self.taxon_id = json['taxonId']
-        self.lineage = Taxonomy.fetch(json['taxonId'])
+        # Constructor
+        # self.taxon_id = taxon_id
+        # self.taxonomy = Taxonomy.fetch(taxon_id)
+        
+    # Internal Methods
+    # N/A
+    
+    # Properties
+    # N/A
+    
+    # Public Methods
+    @classmethod
+    def parse_uniprot_json(cls, json: Dict[str, Any]) -> Organism:
+        organism = cls()
+        organism.taxon_id = json["taxonId"]
+        organism.scientific_name = json["scientificName"]
+        organism.common_name = json.get("commonName")
+        organism.taxonomy_list = json["lineage"]
+        return organism
+    
+    
+    def fetch_taxonomy(self) -> None:
+        self.taxonomy = Taxonomy.fetch(self.taxon_id)

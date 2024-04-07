@@ -1,4 +1,4 @@
-from .reaction import Reaction
+from biolink.models.chemistry.reaction import Reaction
 
 class EnzymeClass:
     def __init__(self):

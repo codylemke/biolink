@@ -7,12 +7,13 @@
         "residue_formula": "C3H5NO",
         "residue_weight": 71.08,
         "pka": 2.34,
-        "pKb": 9.69,
+        "pkb": 9.69,
         "pkx": null,
         "pi": 6.00,
         "property": "aliphatic",
         "relative_hydrophobicity_at_ph2": 47,
-        "relative_hydrophobicity_at_ph7": 41
+        "relative_hydrophobicity_at_ph7": 41,
+        "van_der_waals_volume": 67
     },
     "R": {
         "name": "Arginine",
@@ -22,12 +23,13 @@
         "residue_formula": "C6H12N4O",
         "residue_weight": 156.19,
         "pka": 2.17,
-        "pKb": 9.04,
+        "pkb": 9.04,
         "pkx": 12.48,
         "pi": 10.76,
         "property": "basic",
         "relative_hydrophobicity_at_ph2": -26,
-        "relative_hydrophobicity_at_ph7": -14
+        "relative_hydrophobicity_at_ph7": -14,
+        "van_der_waals_volume": 196
     },
     "N": {
         "name": "Asparagine",
@@ -37,12 +39,13 @@
         "residue_formula": "C4H6N2O2",
         "residue_weight": 114.11,
         "pka": 2.02,
-        "pKb": 8.80,
+        "pkb": 8.80,
         "pkx": null,
         "pi": 5.41,
         "property": "neutral",
         "relative_hydrophobicity_at_ph2": -41,
-        "relative_hydrophobicity_at_ph7": -28
+        "relative_hydrophobicity_at_ph7": -28,
+        "van_der_waals_volume": 113
     },
     "D": {
         "name": "Aspartic Acid",
@@ -52,12 +55,13 @@
         "residue_formula": "C4H5NO3",
         "residue_weight": 115.09,
         "pka": 1.88,
-        "pKb": 9.60,
+        "pkb": 9.60,
         "pkx": 3.65,
         "pi": 2.77,
         "property": "acidic",
         "relative_hydrophobicity_at_ph2": -18,
-        "relative_hydrophobicity_at_ph7": -55
+        "relative_hydrophobicity_at_ph7": -55,
+        "van_der_waals_volume": 106
     },
     "C": {
         "name": "Cysteine",
@@ -67,12 +71,13 @@
         "residue_formula": "C3H5NOS",
         "residue_weight": 103.15,
         "pka": 1.96,
-        "pKb": 10.28,
+        "pkb": 10.28,
         "pkx": 8.18,
         "pi": 5.07,
         "property": "neutral",
         "relative_hydrophobicity_at_ph2": 52,
-        "relative_hydrophobicity_at_ph7": 49
+        "relative_hydrophobicity_at_ph7": 49,
+        "van_der_waals_volume": 104
     },
     "E": {
         "name": "Glutamic acid",
@@ -82,12 +87,13 @@
         "residue_formula": "C5H7NO3",
         "residue_weight": 129.12,
         "pka": 2.19,
-        "pKb": 9.67,
+        "pkb": 9.67,
         "pkx": 4.25,
         "pi": 3.22,
         "property": "acidic",
         "relative_hydrophobicity_at_ph2": 8,
-        "relative_hydrophobicity_at_ph7": -31
+        "relative_hydrophobicity_at_ph7": -31,
+        "van_der_waals_volume": 109
     },
     "Q": {
         "name": "Glutamine",
@@ -97,12 +103,13 @@
         "residue_formula": "C5H8N2O2",
         "residue_weight": 128.13,
         "pka": 2.17,
-        "pKb": 9.13,
+        "pkb": 9.13,
         "pkx": null,
         "pi": 5.65,
         "property": "neutral",
         "relative_hydrophobicity_at_ph2": -18,
-        "relative_hydrophobicity_at_ph7": -10
+        "relative_hydrophobicity_at_ph7": -10,
+        "van_der_waals_volume": 114
     },
     "G": {
         "name": "Glycine",
@@ -112,12 +119,13 @@
         "residue_formula": "C2H3NO",
         "residue_weight": 57.05,
         "pka": 2.34,
-        "pKb": 9.60,
+        "pkb": 9.60,
         "pkx": null,
         "pi": 5.97,
         "property": "unique",
         "relative_hydrophobicity_at_ph2": 0,
-        "relative_hydrophobicity_at_ph7": 0
+        "relative_hydrophobicity_at_ph7": 0,
+        "van_der_waals_volume": 48
     },
     "H": {
         "name": "Histidine",
@@ -127,12 +135,13 @@
         "residue_formula": "C6H7N3O",
         "residue_weight": 137.14,
         "pka": 1.82,
-        "pKb": 9.17,
+        "pkb": 9.17,
         "pkx": 6.00,
         "pi": 7.59,
         "property": "basic",
         "relative_hydrophobicity_at_ph2": -42,
-        "relative_hydrophobicity_at_ph7": 8
+        "relative_hydrophobicity_at_ph7": 8,
+        "van_der_waals_volume": 118
     },
     "O": {
         "name": "Hydroxyproline",
@@ -142,12 +151,13 @@
         "residue_formula": "C5H7NO2",
         "residue_weight": 113.11,
         "pka": 1.82,
-        "pKb": 9.65,
+        "pkb": 9.65,
         "pkx": null,
         "pi": null,
         "property": null,
         "relative_hydrophobicity_at_ph2": null,
-        "relative_hydrophobicity_at_ph7": null
+        "relative_hydrophobicity_at_ph7": null,
+        "van_der_waals_volume": null
     },
     "I": {
         "name": "Isoleucine",
@@ -157,12 +167,13 @@
         "residue_formula": "C6H11NO",
         "residue_weight": 113.16,
         "pka": 2.36,
-        "pKb": 9.60,
+        "pkb": 9.60,
         "pkx": null,
         "pi": 6.02,
         "property": "aliphatic",
         "relative_hydrophobicity_at_ph2": 100,
-        "relative_hydrophobicity_at_ph7": 99
+        "relative_hydrophobicity_at_ph7": 99,
+        "van_der_waals_volume": 124
     },
     "L": {
         "name": "Leucine",
@@ -172,12 +183,13 @@
         "residue_formula": "C6H11NO",
         "residue_weight": 113.16,
         "pka": 2.36,
-        "pKb": 9.60,
+        "pkb": 9.60,
         "pkx": null,
         "pi": 5.98,
         "property": "aliphatic",
         "relative_hydrophobicity_at_ph2": 100,
-        "relative_hydrophobicity_at_ph7": 97
+        "relative_hydrophobicity_at_ph7": 97,
+        "van_der_waals_volume": 124
     },
     "K": {
         "name": "Lysine",
@@ -187,12 +199,13 @@
         "residue_formula": "C6H12N2O",
         "residue_weight": 128.18,
         "pka": 2.18,
-        "pKb": 8.95,
+        "pkb": 8.95,
         "pkx": 10.53,
         "pi": 9.74,
         "property": "basic",
         "relative_hydrophobicity_at_ph2": -37,
-        "relative_hydrophobicity_at_ph7": -23
+        "relative_hydrophobicity_at_ph7": -23,
+        "van_der_waals_volume": 135
     },
     "M": {
         "name": "Methionine",
@@ -202,12 +215,13 @@
         "residue_formula": "C5H9NOS",
         "residue_weight": 131.20,
         "pka": 2.28,
-        "pKb": 9.21,
+        "pkb": 9.21,
         "pkx": null,
         "pi": 5.74,
         "property": "aliphatic",
         "relative_hydrophobicity_at_ph2": 74,
-        "relative_hydrophobicity_at_ph7": 74
+        "relative_hydrophobicity_at_ph7": 74,
+        "van_der_waals_volume": 124
     },
     "F": {
         "name": "Phenylalanine",
@@ -217,12 +231,13 @@
         "residue_formula": "C9H9NO",
         "residue_weight": 147.18,
         "pka": 1.83,
-        "pKb": 9.13,
+        "pkb": 9.13,
         "pkx": null,
         "pi": 5.48,
         "property": "aromatic",
         "relative_hydrophobicity_at_ph2": 92,
-        "relative_hydrophobicity_at_ph7": 100
+        "relative_hydrophobicity_at_ph7": 100,
+        "van_der_waals_volume": 135
     },
     "P": {
         "name": "Proline",
@@ -232,12 +247,13 @@
         "residue_formula": "C5H7NO",
         "residue_weight": 97.12,
         "pka": 1.99,
-        "pKb": 10.60,
+        "pkb": 10.60,
         "pkx": null,
         "pi": 6.30,
         "property": "unique",
         "relative_hydrophobicity_at_ph2": -46,
-        "relative_hydrophobicity_at_ph7": -46
+        "relative_hydrophobicity_at_ph7": -46,
+        "van_der_waals_volume": 90
     },
     "U": {
         "name": "Pyroglutamic",
@@ -247,12 +263,13 @@
         "residue_formula": "C5H5NO2",
         "residue_weight": 121.09,
         "pka": null,
-        "pKb": null,
+        "pkb": null,
         "pkx": null,
         "pi": 5.68,
         "property": null,
         "relative_hydrophobicity_at_ph2": null,
-        "relative_hydrophobicity_at_ph7": null
+        "relative_hydrophobicity_at_ph7": null,
+        "van_der_waals_volume": null
     },
     "S": {
         "name": "Serine",
@@ -262,12 +279,13 @@
         "residue_formula": "C3H5NO2",
         "residue_weight": 87.08,
         "pka": 2.21,
-        "pKb": 9.15,
+        "pkb": 9.15,
         "pkx": null,
         "pi": 5.68,
         "property": "neutral",
         "relative_hydrophobicity_at_ph2": -7,
-        "relative_hydrophobicity_at_ph7": -5
+        "relative_hydrophobicity_at_ph7": -5,
+        "van_der_waals_volume": 73
     },
     "T": {
         "name": "Threonine",
@@ -277,12 +295,13 @@
         "residue_formula": "C4H7NO2",
         "residue_weight": 101.11,
         "pka": 2.09,
-        "pKb": 9.10,
+        "pkb": 9.10,
         "pkx": null,
         "pi": 5.60,
         "property": "neutral",
         "relative_hydrophobicity_at_ph2": 13,
-        "relative_hydrophobicity_at_ph7": 13
+        "relative_hydrophobicity_at_ph7": 13,
+        "van_der_waals_volume": 93
     },
     "W": {
         "name": "Tryptophan",
@@ -292,12 +311,13 @@
         "residue_formula": "C11H10N2O",
         "residue_weight": 186.22,
         "pka": 2.83,
-        "pKb": 9.39,
+        "pkb": 9.39,
         "pkx": null,
         "pi": 5.89,
         "property": "aromatic",
         "relative_hydrophobicity_at_ph2": 84,
-        "relative_hydrophobicity_at_ph7": 97
+        "relative_hydrophobicity_at_ph7": 97,
+        "van_der_waals_volume": 163
     },
     "Y": {
         "name": "Tyrosine",
@@ -307,12 +327,13 @@
         "residue_formula": "C9H9NO2",
         "residue_weight": 163.18,
         "pka": 2.20,
-        "pKb": 9.11,
+        "pkb": 9.11,
         "pkx": 10.07,
         "pi": 5.66,
         "property": "aromatic",
         "relative_hydrophobicity_at_ph2": 49,
-        "relative_hydrophobicity_at_ph7": 63
+        "relative_hydrophobicity_at_ph7": 63,
+        "van_der_waals_volume": 141
     },
     "V": {
         "name": "Valine",
@@ -322,11 +343,12 @@
         "residue_formula": "C5H9NO",
         "residue_weight": 99.13,
         "pka": 2.32,
-        "pKb": 9.62,
+        "pkb": 9.62,
         "pkx": null,
         "pi": 5.96,
         "property": "aliphatic",
         "relative_hydrophobicity_at_ph2": 79,
-        "relative_hydrophobicity_at_ph7": 76
+        "relative_hydrophobicity_at_ph7": 76,
+        "van_der_waals_volume": 105
     }
 }

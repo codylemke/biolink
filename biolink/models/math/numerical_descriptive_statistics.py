@@ -1,11 +1,13 @@
 from typing import List, Any, Tuple
-import pandas as pd
+from numpy.typing import NDArray
+import numpy as np
+from scipy import stats
 
 class NumericalDescriptiveStatistics:
     
-    def __init__(self, series: pd.Series):
+    def __init__(self, data: list[float]):
         # Fields
-        self.series
+        self.data = NDArray[np.float_]
         self.count: int
         self.min: Any
         self.max: Any
@@ -20,25 +22,36 @@ class NumericalDescriptiveStatistics:
         self.interquartile_range: float
         self.skewness: float
         self.kurtosis: float
+        self.kurtosis_excess: float
         
         # Constructor
-        self.series = series
-        self.count = len(series)
-        self.min = series.min()
-        self.max = series.max()
-        self.sum = series.sum()
-        self.mean = series.mean()
-        self.median = series.median()
-        self.mode = series.mode()
-        self.standard_deviation = series.std()
-        self.variance = series.var()
+        self.data = np.array(data)
+        self.count = len(data)
+        self.min = np.min(self.data)
+        self.max = np.max(self.data)
+        self.sum = np.sum(self.data)
+        self.mean = np.mean(self.data)
+        self.median = np.median(self.data)
+        self.mode = stats.mode(self.data)
+        self.standard_deviation = np.std(self.data)
+        self.variance = np.var(self.data)
         self.range = self.max - self.min
-        self.quartiles = series.quantile([0.25, 0.5, 0.75])
-        self.interquartile_range = self.quartiles[0.75] - self.quartiles[0.25]
-        self.skewness = None
-        self.kurtosis = None
+        q1 = np.percentile(self.data, 25)
+        q2 = np.percentile(self.data, 50)
+        q3 = np.percentile(self.data, 75)
+        self.quartiles = [q1, q2, q3]
+        self.interquartile_range = q3 - q1
+        self.skewness = stats.skew(data)
+        self.kurtosis = stats.kurtosis(data)
+        self.kurtosis = stats.kurtosis(data, fisher=False)
         
     
     # Internal Methods
     def __len__(self):
-        return len(self.series)
+        return self.count
+    
+    # Properties
+    # N/A
+    
+    # Public Methods
+    # N/A

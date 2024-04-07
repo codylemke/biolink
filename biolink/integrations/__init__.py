@@ -1,2 +1,2 @@
-from .cli_clients import *
-from .web_clients import *
+from .cli_adapters import *
+from .clients import *

@@ -1,9 +1,12 @@
+from __future__ import annotations
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Dict
 
 class Taxonomy:
+    
     def __init__(self):
+        # Fields
         self.superkingdom: str = None
         self.kingdom: str = None
         self.subkingdom: str = None
@@ -27,6 +30,8 @@ class Taxonomy:
         self.family: str = None
         self.subfamily: str = None
         self.supertribe: str = None
+        self.tribe: str = None
+        self.subtribe: str = None
         self.genus: str = None
         self.subgenus: str = None
         self.species_group: str = None
@@ -37,7 +42,7 @@ class Taxonomy:
         self.entrez_records: Dict[str, int] = {}
     
     @staticmethod
-    def fetch(taxid: str):
+    def fetch(taxid: str) -> Taxonomy:
         url = f'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={taxid}'
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'lxml-html')

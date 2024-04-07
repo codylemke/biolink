@@ -6,17 +6,31 @@ file_path = Path(__file__).resolve()
 
 class AminoAcid:
     # https://www.sigmaaldrich.com/US/en/technical-documents/technical-article/protein-biology/protein-structural-analysis/amino-acid-reference-chart
-    amino_acid_data: Dict[str, Dict[str, Any]] = None
-    one_letter_code_map: Dict[str, str] = None
-    three_letter_code_map: Dict[str, str] = None
-    valid_one_letter_codes: List[str] = None
-    valid_three_letter_codes: List[str] = None
+    # https://proteinsandproteomics.org/content/free/tables_1/table08.pdf
+    initialized = False
+    amino_acid_data: Dict[str, Dict[str, Any]]
+    one_letter_code_map: Dict[str, str]
+    three_letter_code_map: Dict[str, str]
+    valid_one_letter_codes: List[str]
+    valid_three_letter_codes: List[str]
+    
+    @classmethod
+    def _initialize_class(cls):
+        amino_acid_data_path = file_path.parent / "amino_acid.json"
+        with amino_acid_data_path.open('r') as file:
+            cls.amino_acid_data = json.load(file)
+        cls.one_letter_code_map = {key: cls.amino_acid_data[key]["three_letter_code"] for key in cls.amino_acid_data.keys()}
+        cls.three_letter_code_map = {value: key for key, value in cls.one_letter_code_map.items()}
+        cls.valid_one_letter_codes = list(cls.one_letter_code_map.keys())
+        cls.valid_three_letter_codes = list(cls.three_letter_code_map.keys())
     
     def __init__(self, amino_acid_code: str):
         # Fields
         self.one_letter_code: str
-        
+    
         # Constructor
+        if self.initialized == False:
+            AminoAcid._initialize_class()
         self.one_letter_code = self.process_amino_acid_code(amino_acid_code)
         
     
@@ -26,61 +40,61 @@ class AminoAcid:
     
     # Properties
     @property
-    def amino_acid_data(self) -> Dict[str, Any]:
+    def amino_acid_details(self) -> Dict[str, Any]:
         return AminoAcid.amino_acid_data[self.one_letter_code]
     
     @property
     def name(self) -> str:
-        return self.amino_acid_data["name"]
+        return self.amino_acid_details["name"]
     
     @property
     def three_letter_code(self) -> str:
-        return self.amino_acid_data["three_letter_code"]
+        return self.amino_acid_details["three_letter_code"]
     
     @property
     def molecular_formula(self) -> str:
-        return self.amino_acid_data["molecular_formula"]
+        return self.amino_acid_details["molecular_formula"]
     
     @property
     def molecular_weight(self) -> float:
-        return self.amino_acid_data["molecular_weight"]
+        return self.amino_acid_details["molecular_weight"]
     
     @property
     def residue_formula(self) -> str:
-        return self.amino_acid_data["residue_formula"]
+        return self.amino_acid_details["residue_formula"]
     
     @property
     def residue_weight(self) -> float:
-        return self.amino_acid_data["residue_weight"]
+        return self.amino_acid_details["residue_weight"]
     
     @property
     def pka(self) -> float:
-        return self.amino_acid_data["pka"]
+        return self.amino_acid_details["pka"]
     
     @property
     def pkb(self) -> float:
-        return self.amino_acid_data["pkb"]
+        return self.amino_acid_details["pkb"]
     
     @property
     def pkx(self) -> float:
-        return self.amino_acid_data["pkx"]
+        return self.amino_acid_details["pkx"]
     
     @property
     def pi(self) -> float:
-        return self.amino_acid_data["pi"]
+        return self.amino_acid_details["pi"]
 
     @property
     def relative_hydrophobicity_at_ph2(self) -> int:
-        return self.amino_acid_data["relative_hydrophobicity_at_ph2"]
+        return self.amino_acid_details["relative_hydrophobicity_at_ph2"]
     
     @property
     def relative_hydrophobicity_at_ph7(self) -> int:
-        return self.amino_acid_data["relative_hydrophobicity_at_ph7"]
+        return self.amino_acid_details["relative_hydrophobicity_at_ph7"]
 
     # Darby and Creighton (1993)
     @property
     def van_der_waals_volume(self) -> float:
-        return self.amino_acid_data["van_der_waals_volume"]
+        return self.amino_acid_details["van_der_waals_volume"]
     
     @property
     def is_acidic(self) -> bool:
@@ -119,7 +133,7 @@ class AminoAcid:
         return self.one_letter_code in ['F','W','Y','R','H']
     
     @property
-    def if_flexible(self) -> bool:
+    def is_flexible(self) -> bool:
         return self.one_letter_code in ['G','P']
     
     @property
@@ -131,7 +145,7 @@ class AminoAcid:
         return self.one_letter_code in ['N','S','T','Q']
     
     @property
-    def is_protein_acceptor_or_donor(self) -> bool:
+    def is_proton_acceptor_or_donor(self) -> bool:
         return self.one_letter_code == 'H'
     
     @property
@@ -151,8 +165,12 @@ class AminoAcid:
         return self.one_letter_code in ['C', 'S', 'T', 'Y', 'K', 'R', 'D', 'E']
     
     @property
-    def involved_in_disulfide_bonds(self) -> bool:
+    def can_form_disulfide_bonds(self) -> bool:
         return self.one_letter_code == 'C'
+    
+    @property
+    def in_structural_motifs(self) -> bool:
+        return self.one_letter_code in ['C','H','N','K']
     
     @property
     def prefers_alpha_helix(self) -> bool:
@@ -170,10 +188,6 @@ class AminoAcid:
     def is_human_conditionally_essential(self) -> bool:
         return self.one_letter_code in ['R', 'C', 'Q', 'Y', 'G', 'P', 'S']
     
-    @property
-    def in_structural_motifs(self) -> bool:
-        return self.one_letter_code in ['C','H','N','K']
-    
     # Public Methods
     @classmethod
     def process_amino_acid_code(cls, code: str, code_output_type:int=1) -> str:
@@ -181,12 +195,12 @@ class AminoAcid:
         if code_output_type not in [1, 3]:
             raise Exception(f"Invalid code_output_type argument provided: {code_output_type}. Valid code_output_type: 1 or 3")
         # Validate and Process Code
-        if len(code == 1):
+        if len(code) == 1:
             code_type = 1
             code = code.upper()
             if code not in cls.valid_one_letter_codes:
                 raise Exception(f"Invalid one-letter-code argument provided: {code}")
-        elif len(code == 3):
+        elif len(code) == 3:
             code_type = 3
             split_code = code.split()
             code = ''.join([split_code[0].upper(), split_code[1].lower(), split_code[2].lower()])
@@ -205,15 +219,3 @@ class AminoAcid:
             return code
         else:
             raise Exception(f"Invalid arguments: code_type: {code_type}, code_output_type: {code_output_type}")
-        
-
-# Module Initialization
-if AminoAcid.amino_acid_data is None:
-    amino_acid_data_path = file_path.parent / "amino_acid.json"
-    with amino_acid_data_path.open('r') as file:
-        AminoAcid.amino_acid_data = json.load(file)
-    AminoAcid.one_letter_code_map = {key: AminoAcid.amino_acid_data[key]["three_letter_code"] for key in AminoAcid.amino_acid_data.keys()}
-    AminoAcid.three_letter_code_map = {value: key for key, value in AminoAcid.one_letter_code_map}
-    AminoAcid.valid_one_letter_codes = [code for code in AminoAcid.one_letter_code_map.keys()]
-    AminoAcid.valid_three_letter_codes = [code for code in AminoAcid.three_letter_code_map.keys()]
-    

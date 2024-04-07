@@ -1,133 +1,102 @@
-from typing import List, Dict
-from pathlib import Path
-import pandas
-from biolink.models import SystemInfo, FastaFile, AminoAcid
 from __future__ import annotations
+from typing import List, Dict, Any
+from biolink.models.bioinformatics.fasta_file import FastaFile
+from biolink.models.bioinformatics.protein_alignment_position_profile import ProteinAlignmentPositionProfile
+from biolink.models.biology import AminoAcid
 
 class ProteinAlignment:
-    def __init__(self, file_path):
+    
+    def __init__(self):
         # Fields
-        self.type: str # DNA or Protein
-        self.alignment_tool: str
-        self.alignment_tool_version: str
-        self.system_info: SystemInfo
-        self.created_date: str
-        
-        self.file_path: Path
-        self.consensus_sequence: str
-        self.dataframe: pandas.DataFrame
-        
-        self.gap_details: str
-        self.notes: str
-        
+        self.file: FastaFile
+        self.data: Dict[str, str]
         
         # Constructor
-        self.file_path = Path(file_path).resolve()
-        # file_extension = self.file_path.suffix
-        # match file_extension:
-        #     case ".fasta":
-        #         ProteinAlignment.parse_fasta(file_path)
-        #     case ".clustal":
-        #         ProteinAlignment.parse_clustal(file_path)
-        #     case ".msf":
-        #         ProteinAlignment.parse_msf(file_path)
-        #     case ".phylip":
-        #         ProteinAlignment.parse_phylip(file_path)
-        #     case ".slx":
-        #         ProteinAlignment.parse_selex(file_path)
-        #     case ".sth":
-        #         ProteinAlignment.parse_stockholm(file_path)
-        #     case _:
-        #         raise Exception(f"Alignment file type is invalid {file_extension}")
-        
+        self.data = {}
         
         
     # Internal Methods
     def __len__(self) -> int:
-        return len(self.dataframe.iloc[1].tolist())
+        return len(self.data)
+    
     
     # Properties
     @property
     def accessions(self) -> List[str]:
-        return self.dataframe.columns.tolist()
+        return self.data.keys()
+    
+    @property
+    def sequences(self) -> List[str]:
+        return self.data.values()
     
     
     # Public Methods
     @classmethod
     def parse_fasta(cls, file_path:str) -> ProteinAlignment:
-        alignment = cls(file_path)
-        fasta_file = FastaFile(file_path)
-        data = {entry.accession: entry.sequence for entry in fasta_file}
-        alignment.dataframe = pandas.DataFrame(data)
+        alignment = cls()
+        alignment.file = FastaFile(file_path)        
+        for entry in alignment.file.entries:
+            alignment.data[entry.accession] = entry.sequence
         return alignment
     
     @classmethod
     def parse_clustal(cls, file_path:str) -> ProteinAlignment:
-        alignment = cls(file_path)
+        alignment = cls()
         raise Exception("Not implemented yet")
     
     @classmethod
     def parse_msf(cls, file_path:str) -> ProteinAlignment:
-        alignment = cls(file_path)
+        alignment = cls()
         raise Exception("Not implemented yet")
     
     @classmethod
     def parse_phylip(cls, file_path:str) -> ProteinAlignment:
-        alignment = cls(file_path)
+        alignment = cls()
         raise Exception("Not implemented yet")
     
     @classmethod
     def parse_selex(cls, file_path:str) -> ProteinAlignment:
-        alignment = cls(file_path)
+        alignment = cls()
         raise Exception("Not implemented yet")
     
     @classmethod
     def parse_stockholm(cls, file_path:str) -> ProteinAlignment:
-        alignment = cls(file_path)
+        alignment = cls()
         raise Exception("Not implemented yet")
     
-    def get_aligned_sequence(self, accession: str) -> str:
-        return self.dataframe[accession]
+    # Instance Methods
+    def get_alignment_index(self, accession: str, amino_acid: str, amino_acid_position: int) -> int:
+        count = 0
+        for index, char in enumerate(self.data[accession]):
+            if char != '-':
+                if count == amino_acid_position - 1:
+                    if char == amino_acid:
+                        return index
+                    else:
+                        raise Exception(f"{amino_acid} was expected at amino acid position {amino_acid_position} but {char} was found.")
+                count += 1
+        return None
     
-    def get_sequence(self, accession: str) -> str:
-        return self.get_aligned_sequence(accession).replace('-', '')
+    def get_alignment_sequence(self, accession: str) -> str:
+        return self.data[accession]
     
-    def get_alignment_position(self, index) -> pandas.Series:
-        return self.dataframe.iloc[index]
+    def get_protein_sequence(self, accession: str) -> str:
+        return self.get_alignment_sequence(accession).replace('-', '')
     
-    def get_alignment_region(self, start_index: int, end_index: int) -> pandas.DataFrame:
-        return self.dataframe.iloc[start_index:end_index]
+    def get_position_alignment(self, position: int) -> List[str]:
+        return [sequence[position - 1] for sequence in self.sequences]
     
-    def get_alignment_position_distribution(self, index) -> Dict[str, float]:
-        position_series = self.get_alignment_position(index)
-        entries = len(position_series)
-        present_one_letter_codes = set(position_series.to_list())
-        distribution = {}
-        for one_letter_code in present_one_letter_codes:
-            count = (position_series == one_letter_code).sum()
-            distribution[one_letter_code] = count / entries
-        distribution = dict(sorted(distribution.items(), key=lambda item: item[1]))
-        return distribution
+    def get_alignment_position_profile(self, position: int) -> ProteinAlignmentPositionProfile:
+        return ProteinAlignmentPositionProfile(self.get_position_alignment(position))
+        
+    def get_alignment_profile(self) -> List[ProteinAlignmentPositionProfile]:
+        alignment_profile = []
+        sequence_length = len(next(iter(self.sequences)))
+        for index in range(sequence_length):
+            alignment_profile.append(self.get_alignment_position_profile(index + 1))
+        return alignment_profile
     
-    
-    
-    # mean
-    # median
-    # mode
-    # range
-    # interquartile range
-    # variance
-    # standard deviation
-    # coefficient of variation
-    # skewness
-    # kurtosis
-    
-    # consider heatmaps, box plots, histograms, and scatter plots
-    # consider trying to get ramachandran data for amino acids
-    
-    
-    
-    # Quartiles and intraquartile range?
-    # Shannon entropy?
-    # Will eventually need to look at evolution of residues in the context of a phylogenetic tree
-    
+    # def save_alignment_profile(self, file_path: str) -> None:
+    #     with open(file_path, 'w') as file:
+    #         for position in self.get_alignment_profile():
+    #             file.write
