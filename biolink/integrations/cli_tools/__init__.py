@@ -1,6 +1,6 @@
-from .blast_adapter import Blast
-from .clustalo_adapter import ClustalO
-from .mafft_adapter import Mafft
+from .blast import Blast
+from .clustalo import ClustalO
+from .mafft import Mafft
 
 # def _print_command(self, command_list: List[str]) -> str:
 #         return ' '.join(f'"{arg}"' if ' ' in arg or any(c in arg for c in ['*', '?', '$']) else arg for arg in command_list)

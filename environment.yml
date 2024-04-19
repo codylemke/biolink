@@ -5,6 +5,8 @@ channels:
 dependencies:
   - conda-forge::python
   - conda-forge::ipython
+  - conda-forge::numpy
+  - conda-forge::scipy
   - conda-forge::lxml
   - conda-forge::requests
   - conda-forge::beautifulsoup4

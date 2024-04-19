@@ -19,7 +19,7 @@ root_logger.setLevel(log_level)
 root_logger.addHandler(console_log_handler)
 
 
-data_dir = Path("/home/codylemke/repos/biolink/data")
+data_dir = Path(r"E:\data")
 uniprot_client = UniprotClient()
 
 async def main():
@@ -40,83 +40,101 @@ async def main():
         input_sequence_fasta_file.save(str(input_sequence_file))
         input_fasta_files.append(input_sequence_fasta_file)
     
-    # Fetch Input Sequences Protein Data
-    input_protein_data = await uniprot_client.get_entries(accessions, outfmt="json")
-    proteins = [Protein.parse_uniprot_details(entry) for entry in json.loads(input_protein_data)]
+    # # Fetch Input Sequences Protein Data
+    # input_protein_data = await uniprot_client.get_entries(accessions, outfmt="json")
+    # proteins = [Protein.parse_uniprot_details(entry) for entry in json.loads(input_protein_data)]
     
-    # Sort Input Proteins
-    input_plant_proteins = [protein for protein in proteins if "Viridiplantae" in protein.organism.taxonomy_list]
-    input_bacterial_proteins = [protein for protein in proteins if "Bacteria" in protein.organism.taxonomy_list]
-    input_fungal_proteins = [protein for protein in proteins if "Fungi" in protein.organism.taxonomy_list]
+    # # Sort Input Proteins
+    # input_plant_proteins = [protein for protein in proteins if "Viridiplantae" in protein.organism.taxonomy_list]
+    # input_bacterial_proteins = [protein for protein in proteins if "Bacteria" in protein.organism.taxonomy_list]
+    # input_fungal_proteins = [protein for protein in proteins if "Fungi" in protein.organism.taxonomy_list]
     
-    # Sort Input Sequences
-    input_plant_accessions = [protein.uniprot_id for protein in input_plant_proteins]
-    input_bacterial_accessions = [protein.uniprot_id for protein in input_bacterial_proteins]
-    input_fungal_accessions = [protein.uniprot_id for protein in input_fungal_proteins]
-    input_plant_sequences_fasta_entries = []
-    input_bacterial_sequences_fasta_entries = []
-    input_fungal_sequences_fasta_entries = []
-    for entry in input_sequences_fasta_file:
-        if entry.accession in input_plant_accessions:
-            input_plant_sequences_fasta_entries.append(str(entry))
-        elif entry.accession in input_bacterial_accessions:
-            input_bacterial_sequences_fasta_entries.append(str(entry))
-        elif entry.accession in input_fungal_accessions:
-            input_fungal_sequences_fasta_entries.append(str(entry))
-        else:
-            raise Exception(f"Accession could not be sorted: {entry.accession}")
-    input_plant_sequences_fasta_file = FastaFile('\n'.join(input_plant_sequences_fasta_entries))
-    input_bacterial_sequences_fasta_file = FastaFile('\n'.join(input_bacterial_sequences_fasta_entries))
-    input_fungal_sequences_fasta_file = FastaFile('\n'.join(input_fungal_sequences_fasta_entries))
-    input_plant_sequences_file = data_dir / "uniprot" / "input_plant_sequences.fasta"
-    input_bacterial_sequences_file = data_dir / "uniprot" / "input_bacterial_sequences.fasta"
-    input_fungal_sequences_file = data_dir / "uniprot" / "input_fungal_sequences.fasta"
-    input_plant_sequences_fasta_file.save(input_plant_sequences_file)
-    input_bacterial_sequences_fasta_file.save(input_bacterial_sequences_file)
-    input_fungal_sequences_fasta_file.save(input_fungal_sequences_file)
+    # # Sort Input Sequences
+    # input_plant_accessions = [protein.uniprot_id for protein in input_plant_proteins]
+    # input_bacterial_accessions = [protein.uniprot_id for protein in input_bacterial_proteins]
+    # input_fungal_accessions = [protein.uniprot_id for protein in input_fungal_proteins]
+    # input_plant_sequences_fasta_entries = []
+    # input_bacterial_sequences_fasta_entries = []
+    # input_fungal_sequences_fasta_entries = []
+    # for entry in input_sequences_fasta_file:
+    #     if entry.accession in input_plant_accessions:
+    #         input_plant_sequences_fasta_entries.append(str(entry))
+    #     elif entry.accession in input_bacterial_accessions:
+    #         input_bacterial_sequences_fasta_entries.append(str(entry))
+    #     elif entry.accession in input_fungal_accessions:
+    #         input_fungal_sequences_fasta_entries.append(str(entry))
+    #     else:
+    #         raise Exception(f"Accession could not be sorted: {entry.accession}")
+    # input_plant_sequences_fasta_file = FastaFile('\n'.join(input_plant_sequences_fasta_entries))
+    # input_bacterial_sequences_fasta_file = FastaFile('\n'.join(input_bacterial_sequences_fasta_entries))
+    # input_fungal_sequences_fasta_file = FastaFile('\n'.join(input_fungal_sequences_fasta_entries))
+    # input_plant_sequences_file = data_dir / "uniprot" / "input_plant_sequences.fasta"
+    # input_bacterial_sequences_file = data_dir / "uniprot" / "input_bacterial_sequences.fasta"
+    # input_fungal_sequences_file = data_dir / "uniprot" / "input_fungal_sequences.fasta"
+    # input_plant_sequences_fasta_file.save(input_plant_sequences_file)
+    # input_bacterial_sequences_fasta_file.save(input_bacterial_sequences_file)
+    # input_fungal_sequences_fasta_file.save(input_fungal_sequences_file)
     
-    # Generate Input Alignments
-    input_plant_alignment_file = data_dir / "clustalo" / "input_plant_sequence_alignment.fasta"
-    input_bacterial_alignment_file = data_dir / "clustalo" / "input_bacterial_sequence_alignment.fasta"
-    input_fungal_alignment_file = data_dir / "clustalo" / "input_fungal_sequence_alignment.fasta"
-    await ClustalO.run(str(input_plant_sequences_file), str(input_plant_alignment_file), "auto", "max-threads")
-    await ClustalO.run(str(input_bacterial_sequences_file), str(input_bacterial_alignment_file), "auto", "max-threads")
-    await ClustalO.run(str(input_fungal_sequences_file), str(input_fungal_alignment_file), "auto", "max-threads")
-    input_plant_alignment = ProteinAlignment.parse_fasta(input_plant_alignment_file)
-    input_bacterial_alignment = ProteinAlignment.parse_fasta(input_bacterial_alignment_file)
-    input_fungal_alignment = ProteinAlignment.parse_fasta(input_fungal_alignment_file)
+    # # Generate Input Alignments
+    # input_plant_alignment_file = data_dir / "clustalo" / "input_plant_sequence_alignment.fasta"
+    # input_bacterial_alignment_file = data_dir / "clustalo" / "input_bacterial_sequence_alignment.fasta"
+    # input_fungal_alignment_file = data_dir / "clustalo" / "input_fungal_sequence_alignment.fasta"
+    # await ClustalO.run(str(input_plant_sequences_file), str(input_plant_alignment_file), "auto", "max-threads")
+    # await ClustalO.run(str(input_bacterial_sequences_file), str(input_bacterial_alignment_file), "auto", "max-threads")
+    # await ClustalO.run(str(input_fungal_sequences_file), str(input_fungal_alignment_file), "auto", "max-threads")
+    # input_plant_alignment = ProteinAlignment.parse_fasta(input_plant_alignment_file)
+    # input_bacterial_alignment = ProteinAlignment.parse_fasta(input_bacterial_alignment_file)
+    # input_fungal_alignment = ProteinAlignment.parse_fasta(input_fungal_alignment_file)
     
-    # Trim Input Plant Alignment
-    plant_truncation_index = input_plant_alignment.get_alignment_index("Q38802", 'Q', 84)
-    for accession, sequence in input_plant_alignment.data.items():
-        input_plant_alignment.data[accession] = sequence[plant_truncation_index:]
-    input_plant_alignment.file.save()
+    # # Trim Input Plant Alignment
+    # plant_truncation_index = input_plant_alignment.get_alignment_index("Q38802", 'Q', 84)
+    # for accession, sequence in input_plant_alignment.data.items():
+    #     input_plant_alignment.data[accession] = sequence[plant_truncation_index:]
+    # input_plant_alignment.file.save()
     
-    # Calculate Input Alignment Statistics
-    input_plant_alignment_profile = input_plant_alignment.get_alignment_profile()
-    input_bacterial_alignment_profile = input_bacterial_alignment.get_alignment_profile()
-    input_fungal_alignment_profile = input_fungal_alignment.get_alignment_profile()
+    # # Calculate Input Alignment Statistics
+    # input_plant_alignment_profile = input_plant_alignment.get_alignment_profile()
+    # input_bacterial_alignment_profile = input_bacterial_alignment.get_alignment_profile()
+    # input_fungal_alignment_profile = input_fungal_alignment.get_alignment_profile()
     
-    # Align All Sequences    
-    input_alignment_file = data_dir / "mafft" / "input_sequence_alignment.fasta"
-    await Mafft.run(str(input_sequences_file), str(input_alignment_file), "auto", "max-threads")
-    input_alignment = ProteinAlignment.parse_fasta(input_alignment_file)
+    # # Align All Sequences    
+    # input_alignment_file = data_dir / "mafft" / "input_sequence_alignment.fasta"
+    # await Mafft.run(str(input_sequences_file), str(input_alignment_file), "auto", "max-threads")
+    # input_alignment = ProteinAlignment.parse_fasta(input_alignment_file)
     
-    # Calculate Alignment Statistics
-    input_alignment_profile = input_alignment.get_alignment_profile()
+    # # Calculate Alignment Statistics
+    # input_alignment_profile = input_alignment.get_alignment_profile()    
 
     # Blast Input Sequences Against UniRef100
-    database = "/mnt/e/UniRef100-2024_02"
-    output_dir = str(data_dir / "blast")
-    uniref100_accessions = []
-    for file in input_fasta_files:
-        blast_output = await Blast.blastp(file.file_path, database, output_dir, "max-threads")
-        uniref100_accessions.append(BlastResults(blast_output).hit_accessions)
-    uniref100_accessions = list(set(uniref100_accessions))
+    database = str(data_dir / "blast_dbs" / "UniRef100-2024_02")
+    output_dir = data_dir / "blast"
+    # for file in input_fasta_files:
+    #     await Blast.blastp(file.file_path, database, output_dir, "max-threads")
+    uniref100_accessions = set()
+    for file in output_dir.iterdir():
+        uniref100_accessions.update(BlastResults.parse_file(file).hit_accessions)
+    uniref100_accessions = list(uniref100_accessions)
     
     # Map Accessions To UniProtKB
-    output_protein_data = await uniprot_client.run_id_mapping(uniref100_accessions, "UniRef100", "UniProtKB", outfmt="json")
-    output_proteins = [Protein.parse_uniprot_details(entry) for entry in json.loads(output_protein_data)]
+    output_protein_data = await uniprot_client.get_entries(uniref100_accessions, outfmt="json", outfile=str(data_dir / "uniprot" / "test.json"))
+    print("success")
+    return
+    output_protein_json_data = json.loads(output_protein_data)
+    output_proteins = []
+    for result in output_protein_json_data["results"]:
+        output_proteins.append(Protein.parse_uniprot_details(result["to"]))
+    uniparc_ids = []
+    remaining_ids = []
+    for failed_id in output_protein_json_data["failedIds"]:
+        if "UniRef100_UPI" in failed_id:
+            uniparc_ids.append(failed_id.split('_')[1])
+        else:
+            remaining_ids.append(failed_id)
+    new_output_protein_data = await uniprot_client.run_id_mapping(uniparc_ids, "UniParc", "UniProtKB", outfmt="json", outfile=str(data_dir / "uniprot" / "test.json"))
+    root_logger.info(f"Remaining Ids: {remaining_ids}")
+    return
+        
+    
     
     # Sort Output Proteins
     output_plant_proteins = [protein for protein in output_proteins if "Viridiplantae" in protein.organism.taxonomy_list]

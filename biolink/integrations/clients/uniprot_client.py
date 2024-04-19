@@ -1,4 +1,5 @@
 from ftplib import FTP
+import asyncio
 import logging
 import time
 import httpx
@@ -10,6 +11,7 @@ import sys
 
 class UniprotClient:
     logger = logging.getLogger("UniprotClient")
+    semaphor = asyncio.Semaphore(10)
     
     def __init__(self):
         # Fields
@@ -108,7 +110,7 @@ class UniprotClient:
         params = {
             'format': outfmt,
             'compressed': compressed,
-        }  
+        }
         response = await self._client.get(url, params=params)
         if not response.status_code == 200:
             raise httpx.HTTPError(f'{response.status_code}')
@@ -121,23 +123,21 @@ class UniprotClient:
     
     async def get_entries(self, entry_ids: List[str], outfmt: str="fasta", compressed: bool=False, outfile: str=None) -> str:
         if entry_ids[0].startswith("UniRef100"):
-            from_database = 'UniRef100'
+            from_database = "UniRef100"
+            to_database = "UniRef100"
         elif entry_ids[0].startswith("UniRef90"):
-            from_database = 'UniRef90'
+            from_database = "UniRef90"
+            to_database = "UniRef90"
         elif entry_ids[0].startswith("UniRef50"):
-            from_database = 'UniRef50'
+            from_database = "UniRef50"
+            to_database = "UniRef50"
         elif entry_ids[0].startswith('UPI'):
-            from_database = 'UniParc'
+            from_database = "UniParc"
+            to_database = "UniParc"
         else:
-            from_database = 'UniProtKB_AC-ID'
-        data = await self.run_id_mapping(entry_ids, from_database, outfmt=outfmt, compressed=compressed)
-        if outfmt == "json":
-            cleaned_data = [entry["to"] for entry in json.loads(data)["results"]]
-            data = json.dumps(cleaned_data)
-        if outfile != None:
-            with open(outfile, 'w') as file:
-                file.write(data)
-        return data
+            from_database = "UniProtKB_AC-ID"
+            to_database = "UniProtKB"
+        return await self.run_id_mapping(entry_ids, from_database, to_database, outfmt=outfmt, compressed=compressed, outfile=outfile)
     
     
     async def query(self) -> str:
@@ -145,10 +145,12 @@ class UniprotClient:
     
     
     async def run_id_mapping(self, entry_ids: List[str], from_database: str='UniProtKB_AC-ID', to_database: str='UniProtKB', outfmt: str="fasta", compressed: bool=False, outfile: str=None) -> str:
+        # https://rest.uniprot.org/configure/idmapping/fields
         self.logger.info(f"Starting ID Mapping for {entry_ids}")
         batch_size = 9500
         batches = (entry_ids[i:i + batch_size] for i in range(0, len(entry_ids), batch_size))
         results = []
+        failed_ids = []
         for batch in batches:
             # Run Request
             url = "https://rest.uniprot.org/idmapping/run"
@@ -170,7 +172,15 @@ class UniprotClient:
                 job_status = parsed_response['jobStatus']
                 time.sleep(1)
             # Results Request
-            url = f'https://rest.uniprot.org/idmapping/uniprotkb/results/{job_id}'
+            if to_database == "UniProtKB":
+                rest_database = "uniprotkb"
+            elif to_database.startswith("UniRef"):
+                rest_database = "uniref"
+            elif to_database == "UniParc":
+                rest_database = "uniparc"
+            else:
+                raise Exception(f"? {to_database}")
+            url = f'https://rest.uniprot.org/idmapping/{rest_database}/results/{job_id}'
             params = {
                 'format': outfmt,
                 'compressed': compressed,
@@ -178,14 +188,36 @@ class UniprotClient:
             }
             response = await self._client.get(url, params=params)
             # Parse Paginated Results
-            results.append(response.text)
+            data = response.text
+            if outfmt == "json":
+                json_data = json.loads(data)
+                if json_data.get("results"):
+                    results.extend(json_data["results"])
+                if json_data.get("failedIds"):
+                    failed_ids.extend(json_data["failedIds"])
+            else:
+                results.append(data)
             while (link := response.headers.get("Link")) is not None:
-                url = re.search(r'<([^>]+)>', link).group(0)
+                url = re.search(r'<([^>]+)>', link).group(1)
                 response = await self._client.get(url, params=params)
-                results.append(response.text)
-        compiled_results = "".join(results)
+                data = response.text
+                if outfmt == "json":
+                    json_data = json.loads(data)
+                    if json_data.get("results"):
+                        results.extend(json_data["results"])
+                    if json_data.get("failedIds"):
+                        failed_ids.extend(json_data["failedIds"])
+                else:
+                    results.append(data)
+        if outfmt == "json":
+            output = {}
+            output["results"] = results
+            output["failedIds"] = failed_ids
+            output = json.dumps(output)
+        else:
+            output = "".join(results)
         if outfile != None:
             with open(outfile, 'w') as file:
-                file.write(compiled_results)
-        return compiled_results
+                file.write(output)
+        return output
     

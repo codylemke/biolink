@@ -38,7 +38,61 @@ class Protein:
     
     # Public Methods
     @classmethod
-    def parse_uniprot_details(cls, details: Dict[str, Any]) -> Protein:
+    def parse_uniprotkb_details(cls, details: Dict[str, Any]) -> Protein:
+        protein = cls()
+        protein.uniprot_id = details["primaryAccession"]
+        protein.uniprot_entry_type = details["entryType"]
+        protein.uniprot_secondary_accessions = details.get("secondaryAccessions")
+        protein.uniprotkb_id = details["uniProtkbId"]
+        for cross_reference in details["uniProtKBCrossReferences"]:
+            if cross_reference["database"] == "EMBL":
+                protein.embl_id = cross_reference["id"]
+            elif cross_reference["database"] == "RefSeq":
+                protein.refseq_id = cross_reference["id"]
+            elif cross_reference["database"] == "AlphaFoldDB":
+                protein.alphafold_id = cross_reference["id"]
+            elif cross_reference["database"] == "KEGG":
+                protein.kegg_id = cross_reference["id"]
+            elif cross_reference["database"] == "InterPro":
+                protein.interpro_ids.append(cross_reference["id"])
+            elif cross_reference["database"] == "Pfam":
+                protein.pfam_id = cross_reference["id"]
+            elif cross_reference["database"] == "SUPFAM":
+                protein.supfam_id = cross_reference["id"]
+        protein.sequence = details["sequence"]["value"]
+        protein.uniparc_id = details.get("uniParcId")
+        protein.organism = Organism.parse_uniprot_json(details["organism"])
+        return protein
+    
+    @classmethod
+    def parse_uniref_details(cls, details: Dict[str, Any]) -> Protein:
+        protein = cls()
+        protein.uniprot_id = details["primaryAccession"]
+        protein.uniprot_entry_type = details["entryType"]
+        protein.uniprot_secondary_accessions = details.get("secondaryAccessions")
+        protein.uniprotkb_id = details["uniProtkbId"]
+        for cross_reference in details["uniProtKBCrossReferences"]:
+            if cross_reference["database"] == "EMBL":
+                protein.embl_id = cross_reference["id"]
+            elif cross_reference["database"] == "RefSeq":
+                protein.refseq_id = cross_reference["id"]
+            elif cross_reference["database"] == "AlphaFoldDB":
+                protein.alphafold_id = cross_reference["id"]
+            elif cross_reference["database"] == "KEGG":
+                protein.kegg_id = cross_reference["id"]
+            elif cross_reference["database"] == "InterPro":
+                protein.interpro_ids.append(cross_reference["id"])
+            elif cross_reference["database"] == "Pfam":
+                protein.pfam_id = cross_reference["id"]
+            elif cross_reference["database"] == "SUPFAM":
+                protein.supfam_id = cross_reference["id"]
+        protein.sequence = details["sequence"]["value"]
+        protein.uniparc_id = details.get("uniParcId")
+        protein.organism = Organism.parse_uniprot_json(details["organism"])
+        return protein
+    
+    @classmethod
+    def parse_uniparc_details(cls, details: Dict[str, Any]) -> Protein:
         protein = cls()
         protein.uniprot_id = details["primaryAccession"]
         protein.uniprot_entry_type = details["entryType"]
