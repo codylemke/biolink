@@ -3,6 +3,7 @@ import logging
 from typing import List, Dict, Any
 from .organism import Organism
 from .amino_acid import AminoAcid
+from biolink.models import FastaFile
 
 class Protein:
     logger = logging.getLogger("Protein")
@@ -23,6 +24,7 @@ class Protein:
         self.sequence: str
         self.uniparc_id: str
         self.organism: Organism
+        self.fasta_file: FastaFile
         
         # Constructor
         # N/A

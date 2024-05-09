@@ -2,12 +2,12 @@ from ftplib import FTP
 import asyncio
 import logging
 import time
-import httpx
 from typing import List
 import json
 import os
 import re
 import sys
+import httpx
 
 class UniprotClient:
     logger = logging.getLogger("UniprotClient")
@@ -17,6 +17,7 @@ class UniprotClient:
         # Fields
         self._client: httpx.AsyncClient
         self._release: str
+        self._last_id_mapping_job_id: str
         
         # Constructure
         self._client = httpx.AsyncClient()
@@ -162,6 +163,7 @@ class UniprotClient:
             response = await self._client.post(url, data=data)
             json_response = json.loads(response.text)
             job_id = json_response['jobId']
+            self._last_id_mapping_job_id = job_id
             self.logger.info(f"Run request jobId: {job_id}")
             # Status Request
             url = f"https://rest.uniprot.org/idmapping/status/{job_id}"

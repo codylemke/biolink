@@ -8,6 +8,7 @@ class Taxonomy:
     
     def __init__(self):
         # Fields
+        self.id: str
         self.scientific_name: str
         self.other_names: List[str]
         self.parent: str
@@ -34,6 +35,7 @@ class Taxonomy:
         root = etree.fromstring(xml)
         taxon = root.find('Taxon')
         if taxon is not None:
+            obj.id = taxon.findtext("TaxId", default="")
             obj.scientific_name = taxon.findtext('ScientificName', default="")
             obj.parent = taxon.findtext('ParentTaxId', default="")
             obj.rank = taxon.findtext('Rank', default="")
